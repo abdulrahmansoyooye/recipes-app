@@ -24,6 +24,7 @@ router.post("/", verifyToken, async (req, res) => {
     res.json(response);
   } catch (err) {
     res.json(err);
+    res.sendStatus(401);
   }
 });
 
@@ -55,7 +56,6 @@ router.get("/savedRecipes/:userId", async (req, res) => {
       _id: { $in: user.savedRecipes },
     });
 
-    console.log(savedRecipes);
     res.status(201).json({ savedRecipes });
   } catch (err) {
     console.log(err);

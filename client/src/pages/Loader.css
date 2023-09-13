@@ -4,12 +4,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(
-    0,
-    0,
-    0,
-    0.5
-  ); /* You can adjust the transparency here */
+  /* You can adjust the transparency here */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -17,8 +12,8 @@
 
 /* Center the spinner animation within the overlay */
 .loader-spinner {
-  border: 4px solid rgba(255, 255, 255, 0.3); /* Spinner border color */
-  border-top: 4px solid #ffffff; /* Spinner top border color */
+  border: 4px solid rgba(219, 197, 178, 0.479); /* Spinner border color */
+  border-top: 4px solid #fca311; /* Spinner top border color */
   border-radius: 50%;
   width: 40px;
   height: 40px;
