@@ -10,21 +10,9 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     const response = await RecipeModel.find({});
-    res.json(response);
+    res.json(response.reverse());
   } catch (err) {
     res.json(err);
-  }
-});
-
-router.post("/", verifyToken, async (req, res) => {
-  const recipe = new RecipeModel(req.body);
-
-  try {
-    const response = await recipe.save();
-    res.json(response);
-  } catch (err) {
-    res.json(err);
-    res.sendStatus(401);
   }
 });
 

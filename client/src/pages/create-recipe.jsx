@@ -4,6 +4,8 @@ import useGetUserId from "../hooks/useGetUserId";
 import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import Loader from "./Loader";
+import Dropzone from "react-dropzone";
+
 import {
   Box,
   Button,
@@ -21,7 +23,7 @@ export const CreateRecipe = () => {
   const [loader, setLoader] = useState(false);
   const navigate = useNavigate();
   const userId = useGetUserId();
-  const [recipe, setRecipe] = useState({
+  const [Recipes, setRecipes] = useState({
     name: "",
     ingredients: [""],
     instructions: "",
@@ -33,26 +35,35 @@ export const CreateRecipe = () => {
   const mobileScreens = useMediaQuery("(max-width:800px)");
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setRecipe({ ...recipe, [name]: value });
+    setRecipes({ ...Recipes, [name]: value });
   };
   const addIngredient = (e) => {
-    setRecipe({ ...recipe, ingredients: [...recipe.ingredients, ""] });
+    setRecipes({ ...Recipes, ingredients: [...Recipes.ingredients, ""] });
   };
   const handleIngredientChange = (e, index) => {
     const { value } = e.target;
-    const ingredients = recipe.ingredients;
+    const ingredients = Recipes.ingredients;
     ingredients[index] = value;
-    setRecipe({ ...recipe }, ingredients);
+    setRecipes({ ...Recipes }, ingredients);
   };
 
   const [alert, setAlert] = useState(false);
   const [error, setError] = useState(false);
   const theme = useTheme();
   const onSubmit = async (e) => {
+    const recipe = new FormData();
+    recipe.append("name", Recipes.name);
+    recipe.append("ingredients", Recipes.ingredients);
+    recipe.append("instructions", Recipes.instructions);
+    recipe.append("image", Recipes.imageUrl);
+    recipe.append("imageUrl", Recipes.imageUrl.name);
+    recipe.append("cookingTime", Recipes.cookingTime);
+    recipe.append("userOwner", Recipes.userOwner);
     e.preventDefault();
+    console.log(recipe);
     try {
       const response = await axios.post(
-        "http://localhost:3001/recipes",
+        "https://nice-lime-pea-coat.cyclic.cloud/recipes",
         recipe,
         {
           headers: { authorization: cookies.access_token },
@@ -111,6 +122,7 @@ export const CreateRecipe = () => {
             }}
           >
             <TextField
+              name="name"
               onChange={handleChange}
               placeholder="Recipe Name"
               sx={{
@@ -119,7 +131,7 @@ export const CreateRecipe = () => {
               required
             />
 
-            {recipe.ingredients.map((ingredient, index) => {
+            {Recipes.ingredients.map((ingredient, index) => {
               return (
                 <TextField
                   label="Add an Item"
@@ -154,8 +166,8 @@ export const CreateRecipe = () => {
               name="instructions"
               onChange={handleChange}
               aria-label="Instructions"
-              minLength={6}
-              minRows={3}
+              minLength={7}
+              minRows={4}
               placeholder="Instructions"
               sx={{
                 gridColumn: "1",
@@ -163,16 +175,43 @@ export const CreateRecipe = () => {
               required
             />
 
-            <TextField
-              type="text"
-              label="Image Url"
-              name="imageUrl"
-              onChange={handleChange}
-              sx={{
-                gridColumn: "2",
+            <Dropzone
+              onDrop={(acceptedFiles) =>
+                setRecipes({ ...Recipes, imageUrl: acceptedFiles[0] })
+              }
+            >
+              {({ getInputProps, getRootProps }) => {
+                return (
+                  <Box
+                    sx={{
+                      gridColumn: "2",
+                      border: "2px dashed #14213d",
+                      cursor: "pointer",
+                      // borderRadius: "1rem",
+                      p: "0.5rem",
+                      textAlign: "center",
+                    }}
+                    required
+                    {...getRootProps()}
+                  >
+                    <input {...getInputProps()} />
+                    {!Recipes.imageUrl ? (
+                      <Box
+                        sx={{
+                          m: "0.5rem auto",
+                        }}
+                      >
+                        <Typography>Add Image Here</Typography>
+                      </Box>
+                    ) : (
+                      <Typography color={"#14213d"}>
+                        {Recipes.imageUrl.name}
+                      </Typography>
+                    )}
+                  </Box>
+                );
               }}
-              required
-            />
+            </Dropzone>
             {/* <label htmlFor="cookingTime">Cooking Time (minutes)</label> */}
             <TextField
               type="number"
